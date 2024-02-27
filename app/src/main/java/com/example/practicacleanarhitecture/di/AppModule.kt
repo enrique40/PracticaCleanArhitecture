@@ -1,6 +1,9 @@
 package com.example.practicacleanarhitecture.di
 
-import com.example.practicacleanarhitecture.domain.repository.AuthRespository
+import com.example.practicacleanarhitecture.data.repository.ProductsRepositoryImpl
+import com.example.practicacleanarhitecture.domain.repository.ProductsRespository
+import com.example.practicacleanarhitecture.domain.use_cases.products.GetProducts
+import com.example.practicacleanarhitecture.domain.use_cases.products.ProductsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,7 +33,7 @@ object AppModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://localhost:1337/api/")
+            .baseUrl("http://127.0.0.1:1337")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -38,7 +41,15 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): AuthRespository {
-        return retrofit.create(AuthRespository::class.java)
+    fun provideApiService(retrofit: Retrofit): ProductsRespository {
+        return retrofit.create(ProductsRespository::class.java)
     }
+
+/*    @Provides
+    fun providerPostRepository(impl: ProductsRepositoryImpl): ProductsRespository = impl*/
+
+    @Provides
+    fun provideProductsUseCase(respository: ProductsRespository) = ProductsUseCase(
+        getProducts = GetProducts(respository)
+    )
 }
